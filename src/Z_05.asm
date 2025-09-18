@@ -1,5 +1,6 @@
 .INCLUDE "Variables.inc"
 .INCLUDE "CommonVars.inc"
+.INCLUDE "Constants.inc"
 
 .SEGMENT "BANK_05_00"
 
@@ -5527,7 +5528,7 @@ FindAndCreatePushBlockObject:
     RTS
 
 InitMode12:
-    LDA #$04                    ; Play "End Level" song.
+    LDA #SONG_ENDLEVEL          ; Play "End Level" song.
     STA SongRequest
     LDA #$20                    ; Set decreasing column for UpdateWorldCurtainEffect.
     STA ObjX+12

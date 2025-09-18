@@ -1,52 +1,63 @@
 .INCLUDE "Variables.inc"
+.INCLUDE "Constants.inc"
 
 .SEGMENT "BANK_00_00"
-
+;
+; Music
+; ----------------------------------------------------------------------------
 
 .EXPORT DriveAudio
+.EXPORT SONG_LASTLEVEL
 
 
-.MACRO song  name, index
-	.BYTE .IDENT(.CONCAT("Song", .STRING(name))) + $08*index - SongTable
+.MACRO song_phrase  song_name, index, const, const_offset
+	.BYTE song_name + $08*index - SongTable
+	.IFNBLANK const
+		.IFNBLANK const_offset
+			const = * - SongTable + const_offset
+		.ELSE
+			const = * - SongTable
+		.ENDIF
+	.ENDIF
 .ENDMACRO
 
 SongTable:
-	song Overworld, 1
-    song Ganon, 0
-    song EndLevel, 0
-    song ItemTaken, 0
-    song Overworld, 1
-    song LastLevel, 0
-    song Unknown, 0
-    song Unknown, 0
-    song Overworld, 0
-    song Overworld, 1
-    song Overworld, 2
-    song Overworld, 4
-    song Overworld, 1
-    song Overworld, 3
-    song Overworld, 4
-    song Underworld, 0
-    song Underworld, 1
-    song Ending, 0
-    song Ending, 1
-    song Ending, 2
-    song Ending, 3
-    song Ending, 4
-    song Ending, 3
-    song Ending, 5
-    song Ending, 6
-    song Demo, 0
-    song Demo, 1
-    song Demo, 2
-    song Demo, 3
-    song Demo, 4
-    song Demo, 2
-    song Demo, 5
-    song Demo, 6
-    song Demo, 7
-    song Demo, 4
-    song Zelda, 0
+	song_phrase SongOverworld, 1 ; unused
+    song_phrase SongGanon, 0                                ; SONG_GANON
+    song_phrase SongEndLevel, 0                             ; SONG_ENDLEVEL
+    song_phrase SongItemTaken, 0                            ; SONG_ITEMTAKEN
+    song_phrase SongOverworld, 1 ; unused
+    song_phrase SongLastLevel, 0                            ; SONG_LASTLEVEL
+    song_phrase SongUnused, 0 ; unused
+    song_phrase SongUnused, 0 ; unused
+    song_phrase SongOverworld, 0, PHRASE_OVERWORLD          ; SONG_OVERWORLD
+    song_phrase SongOverworld, 1, PHRASE_OVERWORLD_LOOP
+    song_phrase SongOverworld, 2
+    song_phrase SongOverworld, 4
+    song_phrase SongOverworld, 1
+    song_phrase SongOverworld, 3
+    song_phrase SongOverworld, 4, PHRASE_OVERWORLD_END, 1
+    song_phrase SongUnderworld, 0, PHRASE_UNDERWORLD        ; SONG_UNDERWORLD
+    song_phrase SongUnderworld, 1, PHRASE_UNDERWORLD_END, 1
+    song_phrase SongEnding, 0, PHRASE_ENDING                ; SONG_ENDING
+    song_phrase SongEnding, 1
+    song_phrase SongEnding, 2
+    song_phrase SongEnding, 3, PHRASE_ENDING_LOOP
+    song_phrase SongEnding, 4
+    song_phrase SongEnding, 3
+    song_phrase SongEnding, 5
+    song_phrase SongEnding, 6, PHRASE_ENDING_END, 1
+    song_phrase SongDemo, 0, PHRASE_DEMO                     ; SONG_DEMO
+    song_phrase SongDemo, 1
+    song_phrase SongDemo, 2
+    song_phrase SongDemo, 3
+    song_phrase SongDemo, 4
+    song_phrase SongDemo, 2
+    song_phrase SongDemo, 5
+    song_phrase SongDemo, 6
+    song_phrase SongDemo, 7
+    song_phrase SongDemo, 4, PHRASE_DEMO_END, 1
+    song_phrase SongZelda, 0, PHRASE_ZELDA                   ; SONG_ZELDA
 
 
 .MACRO song_header  note_length_table, song_script, triangle, square, noise, envelope, triangle_effect
@@ -78,91 +89,91 @@ SongTable:
 ; 3: Triangle note offset in script
 ; 4: Square 0 note offset in script
 ; 5: Noise note offset in script
-; 6: Envelope selector
+; 6: Envelope selector (0 = low nybble; 1 = high nybble)
 ; 7: Base note length (0 = short; 1 = long)
 ;
 SongDemo:
-    song_header 4, SongScriptDemo0,           $3B, $1D, $4F, 0, 1
-    song_header 4, SongScriptDemo0+$51,       $27, $57, $23, 1, 0
-    song_header 4, SongScriptDemo0+$116,      $38, $17, $B8, 0, 0
-    song_header 4, SongScriptDemo0+$166,      $6C, $26, $68, 0, 0
-    song_header 4, SongScriptDemo0+$202,      $3E, $25, $21, 0, 0
-    song_header 4, SongScriptDemo0+$260,      $19, $0D, $31, 0, 0
-    song_header 4, SongScriptDemo0+$295,      $3F, $27, $7C, 0, 0
-    song_header 4, SongScriptDemo0+$304,      $1D, $11, $0D, 0, 0
+    song_header 4, SongScriptDemo,           $3B, $1D, $4F, 0, 1
+    song_header 4, SongScriptDemo+$51,       $27, $57, $23, 1, 0
+    song_header 4, SongScriptDemo+$116,      $38, $17, $B8, 0, 0
+    song_header 4, SongScriptDemo+$166,      $6C, $26, $68, 0, 0
+    song_header 4, SongScriptDemo+$202,      $3E, $25, $21, 0, 0
+    song_header 4, SongScriptDemo+$260,      $19, $0D, $31, 0, 0
+    song_header 4, SongScriptDemo+$295,      $3F, $27, $7C, 0, 0
+    song_header 4, SongScriptDemo+$304,      $1D, $11, $0D, 0, 0
 
-SongUnknown:
-    song_header 2, SongScriptOverworld0+$31  ;$10, $5D, $8E, 1, 1  overlap
+SongUnused:
+    song_header 2, SongScriptOverworld+$31  ;$10, $5D, $8E, 1, 1  overlap  ; unused
 
 SongItemTaken:
-    song_header 2, SongScriptItemTaken0,      $0D, $07, $00, 0 ;1  overlap
+    song_header 2, SongScriptItemTaken,      $0D, $07, $00, 0 ;1  overlap
 
 SongEndLevel:
-    song_header 2, SongScriptEndLevel0,       $46, $22, $00, 0 ;1  overlap
+    song_header 2, SongScriptEndLevel,       $46, $22, $00, 0 ;1  overlap
 
 SongOverworld:
-    song_header 2, SongScriptOverworld0,      $32, $5D, $8E, 1, 0
-    song_header 2, SongScriptOverworld0+$9F,  $35, $16, $CE, 1, 0
-    song_header 2, SongScriptOverworld0+$E5,  $60, $26, $88, 1, 0
-    song_header 2, SongScriptOverworld0+$1C2, $59, $2D, $A4, 1, 0
-    song_header 2, SongScriptOverworld0+$174, $3B, $1A, $F2, 1, 0
+    song_header 2, SongScriptOverworld,      $32, $5D, $8E, 1, 0
+    song_header 2, SongScriptOverworld+$9F,  $35, $16, $CE, 1, 0
+    song_header 2, SongScriptOverworld+$E5,  $60, $26, $88, 1, 0
+    song_header 2, SongScriptOverworld+$1C2, $59, $2D, $A4, 1, 0
+    song_header 2, SongScriptOverworld+$174, $3B, $1A, $F2, 1, 0
 
 SongUnderworld:
-    song_header 0, SongScriptUnderworld0,     $45, $22, $00, 1, 1
-    song_header 0, SongScriptUnderworld0+$5D, $39, $1C, $00, 1, 1
+    song_header 0, SongScriptUnderworld,     $45, $22, $00, 1, 1
+    song_header 0, SongScriptUnderworld+$5D, $39, $1C, $00, 1, 1
 
 SongLastLevel:
-    song_header 2, SongScriptLastLevel0,      $A5, $53, $CD, 0, 0
+    song_header 2, SongScriptLastLevel,      $A5, $53, $CD, 0, 0
 
 SongGanon:
-    song_header 2, SongScriptGanon0,          $22, $10, $00, 0, 1
+    song_header 2, SongScriptGanon,          $22, $10, $00, 0, 1
 
 SongEnding:
-    song_header 1, SongScriptEnding0,         $22, $50, $59, 1, 0
-    song_header 1, SongScriptEnding0,         $2F, $50, $59, 1, 0
-    song_header 1, SongScriptEnding0+$5B,     $7A, $1B, $C2, 0, 0
-    song_header 1, SongScriptEnding0+$8F,     $46, $24, $8E, 1, 0
-    song_header 1, SongScriptEnding0+$A6,     $44, $23, $77, 1, 0
-    song_header 1, SongScriptEnding0+$F6,     $1B, $0E, $27, 1, 0
-    song_header 1, SongScriptEnding0+$123,    $40, $1A, $6B, 0, 0
+    song_header 1, SongScriptEnding,         $22, $50, $59, 1, 0
+    song_header 1, SongScriptEnding,         $2F, $50, $59, 1, 0
+    song_header 1, SongScriptEnding+$5B,     $7A, $1B, $C2, 0, 0
+    song_header 1, SongScriptEnding+$8F,     $46, $24, $8E, 1, 0
+    song_header 1, SongScriptEnding+$A6,     $44, $23, $77, 1, 0
+    song_header 1, SongScriptEnding+$F6,     $1B, $0E, $27, 1, 0
+    song_header 1, SongScriptEnding+$123,    $40, $1A, $6B, 0, 0
 
 SongZelda:
-    song_header 2, SongScriptZelda0,          $3F, $20, $00, 0, 0
+    song_header 2, SongScriptZelda,          $3F, $20, $00, 0, 0
 
-SongScriptItemTaken0:
+SongScriptItemTaken:
     .INCBIN "dat/SongScriptItemTaken0.dat"
 
-SongScriptOverworld0:
+SongScriptOverworld:
     .INCBIN "dat/SongScriptOverworld0.dat"
 
-SongScriptUnderworld0:
+SongScriptUnderworld:
     .INCBIN "dat/SongScriptUnderworld0.dat"
 
-SongScriptEndLevel0:
+SongScriptEndLevel:
     .INCBIN "dat/SongScriptEndLevel0.dat"
 
-SongScriptLastLevel0:
+SongScriptLastLevel:
     .INCBIN "dat/SongScriptLastLevel0.dat"
 
-SongScriptGanon0:
+SongScriptGanon:
     .INCBIN "dat/SongScriptGanon0.dat"
 
-SongScriptEnding0:
+SongScriptEnding:
     .INCBIN "dat/SongScriptEnding0.dat"
 
-SongScriptDemo0:
+SongScriptDemo:
     .INCBIN "dat/SongScriptDemo0.dat"
 
-SongScriptZelda0:
+SongScriptZelda:
     .INCBIN "dat/SongScriptZelda0.dat"
 
 DriveAudio:
+    LDA Paused
+    BEQ @Play
     ; If the game is paused, then silence all channels
     ; by first disabling them, then enabling them.
     ;
     ; Then go drive tune channel 0 only.
-    LDA Paused
-    BEQ @Play
     LDA #$00
     STA ApuStatus_4015
     LDA #$0F
@@ -757,30 +768,30 @@ DriveSong:
 @ChangeSong:
     STA Song
     BMI @PlayFirstDemoPhrase
-    CMP #$06
+    CMP #SONG_ZELDA
     BNE :+
-    LDY #$24
+    LDY #PHRASE_ZELDA
     BNE PrepPhrase
 :
-    CMP #$01
+    CMP #SONG_OVERWORLD
     BEQ @PlayFirstOverworldPhrase
-    CMP #$40
+    CMP #SONG_UNDERWORLD
     BEQ @PlayFirstUnderworldPhrase
-    CMP #$10
+    CMP #SONG_ENDING
     BNE PlayNextPhrase
-    LDY #$11
+    LDY #PHRASE_ENDING - 1
     BNE SetPrevPhraseIndex
 
 @PlayFirstDemoPhrase:
-    LDY #$19
+    LDY #PHRASE_DEMO - 1
     BNE SetPrevPhraseIndex
 
 @PlayFirstUnderworldPhrase:
-    LDY #$0F
+    LDY #PHRASE_UNDERWORLD - 1
     BNE SetPrevPhraseIndex
 
 @PlayFirstOverworldPhrase:
-    LDY #$08
+    LDY #PHRASE_OVERWORLD - 1
 
 SetPrevPhraseIndex:
     STY SongPhraseIndex
@@ -788,43 +799,43 @@ SetPrevPhraseIndex:
 PlayNextPhrase:
     TAX
     BMI @PlayNextDemoPhrase
-    CMP #$01
+    CMP #SONG_OVERWORLD
     BEQ @PlayNextOverworldPhrase
-    CMP #$40
+    CMP #SONG_UNDERWORLD
     BEQ @PlayNextUnderworldPhrase
-    CMP #$10
+    CMP #SONG_ENDING
     BNE @PlaySinglePhraseSong
 
     ; Play the next phrase of the ending song.
     INC SongPhraseIndex
     LDY SongPhraseIndex
-    CPY #$1A
+    CPY #PHRASE_ENDING_END
     BNE PrepPhrase
-    LDY #$14
+    LDY #PHRASE_ENDING_LOOP - 1
     BNE SetPrevPhraseIndex
 
 @PlayNextUnderworldPhrase:
     INC SongPhraseIndex
     LDY SongPhraseIndex
-    CPY #$12
+    CPY #PHRASE_UNDERWORLD_END
     BNE PrepPhrase
-    LDY #$0F
+    LDY #PHRASE_UNDERWORLD - 1
     BNE SetPrevPhraseIndex
 
 @PlayNextOverworldPhrase:
     INC SongPhraseIndex
     LDY SongPhraseIndex
-    CPY #$10
+    CPY #PHRASE_OVERWORLD_END
     BNE PrepPhrase
-    LDY #$09
+    LDY #PHRASE_OVERWORLD_LOOP - 1
     BNE SetPrevPhraseIndex
 
 @PlayNextDemoPhrase:
     INC SongPhraseIndex
     LDY SongPhraseIndex
-    CPY #$24
+    CPY #PHRASE_DEMO_END
     BNE PrepPhrase
-    LDY #$19
+    LDY #PHRASE_DEMO - 1
     BNE SetPrevPhraseIndex
 
 @PlaySinglePhraseSong:
@@ -855,7 +866,7 @@ PrepPhrase:
     LDA SongTable+6, Y
     STA SongEnvelopeSelector
     LDA SongTable+7, Y
-    STA $05F1                   ; TODO: [05F1]
+    STA BaseNoteLength
     LDA #$01
     STA NoteCounterSongSq1
     STA NoteCounterSongSq0
@@ -1053,8 +1064,7 @@ ApplySq1Effects:
     JSR VibratePitch
     STX TrgTimer_400A
 
-    ; TODO: [05F1] ?
-    LDA $05F1
+    LDA BaseNoteLength
     BPL :+
     LDA #$1F
     BNE @SetTrgLinear

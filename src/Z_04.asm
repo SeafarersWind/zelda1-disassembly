@@ -1,6 +1,7 @@
 .INCLUDE "Variables.inc"
 .INCLUDE "CommonVars.inc"
 .INCLUDE "ObjVars.inc"
+.INCLUDE "Constants.inc"
 
 .SEGMENT "BANK_04_00"
 
@@ -9615,7 +9616,7 @@ UpdateZelda:
     STA ObjDir
 
     ; Play the Zelda fanfare.
-    LDA #$06
+    LDA #SONG_ZELDA
     STA SongRequest
 
     ; Set a delay of $80 frames at the beginning of the next state.
@@ -10322,7 +10323,7 @@ Ganon_ScenePhase0:
     LDA FadeCycle
     CMP #$C0
     BNE @CheckFadeCycle
-    LDA #$02
+    LDA #SONG_GANON
     STA SongRequest
 
 @CheckFadeCycle:
@@ -10370,7 +10371,7 @@ Ganon_ScenePhase1:
     ; 4. go to scene phase 2: fighting / not holding triforce
     STA ObjState
     STA ItemTypeToLift
-    LDA #$20
+    LDA #SONG_LASTLEVEL
     STA SongRequest
     INC Ganon_ScenePhase
 
@@ -10514,7 +10515,7 @@ Ganon_Dying:
     STA ObjY, X
     JSR Ganon_SetUpBurstRays
     JSR PlayBossDeathCry
-    LDA #$02                    ; Ganon/Triforce song
+    LDA #SONG_GANON             ; Ganon/Triforce song
     STA SongRequest
 
 @HandleAshes:

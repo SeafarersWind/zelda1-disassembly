@@ -100,7 +100,7 @@ if ( !$assemblyPassed )
 }
 
 echo "Linking"
-.\ext\ld65 -o bin\Z.bin -C src\Z.cfg $objPaths
+.\ext\ld65 -o bin\Z.bin -C src\Z.cfg $objPaths -m map.txt
 if ( $LastExitCode -ne 0 ) { exit }
 
 echo "Combining raw ROM with NES header"

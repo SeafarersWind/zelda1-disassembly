@@ -1,6 +1,7 @@
 .INCLUDE "Variables.inc"
 .INCLUDE "CommonVars.inc"
 .INCLUDE "CaveVars.inc"
+.INCLUDE "Constants.inc"
 
 .IMPORT __BANK_01_CODE_LOAD__
 .IMPORT __BANK_01_CODE_RUN__
@@ -2098,7 +2099,7 @@ CheckPowerTriforceFanfare:
 @EndFanfare:
     ; The fanfare is done.
     JSR ReplaceAshesPaletteRow
-    LDA #$20                    ; Play the song for level 9 again.
+    LDA #SONG_LASTLEVEL         ; Play the song for level 9 again.
     STA SongRequest
     LDA #$01
     STA LastBossDefeated
@@ -2982,8 +2983,8 @@ PlaySample:
 PlayEffect:
     LDY #$03
 :
-    ORA SongRequest, Y
-    STA SongRequest, Y
+    ORA SongRequest, Y ; SampleRequest or EffectRequest
+    STA SongRequest, Y ; SampleRequest or EffectRequest
     RTS
 
 InitModeB_EnterCave_Bank5:
@@ -4473,7 +4474,7 @@ TakeItem:
     BEQ @SkipLift
     LDX #$80                    ; Lift for $80 frames.
     STX ItemLiftTimer
-    LDX #$08                    ; Play the "item" song.
+    LDX #SONG_ITEMTAKEN         ; Play the "item" song.
     STX SongRequest
     STA ItemTypeToLift          ; Set the item type for lifting.
 

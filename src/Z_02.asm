@@ -1,5 +1,6 @@
 .INCLUDE "Variables.inc"
 .INCLUDE "BeginEndVars.inc"
+.INCLUDE "Constants.inc"
 
 .SEGMENT "BANK_02_00"
 
@@ -221,7 +222,7 @@ UpdateMode0Demo_Sub0:
     AND #$10
     BEQ Exit                    ; then return.
     STA TransferredDemoPatterns ; Else, store $10, because it's convenient and not $A5.
-    LDA #$00
+    LDA #SONG_OFF
     STA SongRequest
     JSR SilenceAllSound
     LDA #$5A
@@ -484,7 +485,7 @@ InitDemoSubphaseTransferTitlePalette:
     JMP IncSubphase             ; Go advance the DemoSubphase and return.
 
 InitDemoSubphasePlayTitleSong:
-    LDA #$80                    ; Request the title song.
+    LDA #SONG_DEMO              ; Request the title song.
     STA SongRequest
 
     ; Select transfer buffer 8 (offset $10 in table):
@@ -3454,7 +3455,7 @@ UpdateMode13WinGame_Sub0_Flash:
 
 @AdvanceSubmode:
     ; Play the ending song.
-    LDA #$10
+    LDA #SONG_ENDING
     STA SongRequest
 
     ; Wait $40 frames at the beginning of the next mode

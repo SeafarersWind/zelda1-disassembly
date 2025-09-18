@@ -1,5 +1,6 @@
 .INCLUDE "Variables.inc"
 .INCLUDE "CommonVars.inc"
+.INCLUDE "Constants.inc"
 
 .SEGMENT "BANK_07_00"
 
@@ -1764,8 +1765,16 @@ UpdateMode4and6EnterLeave:
     JMP Link_EndMoveAndAnimateInRoom
 
 LevelSongIds:
-    .BYTE $01, $40, $40, $40, $40, $40, $40, $40
-    .BYTE $40, $20
+    .BYTE SONG_OVERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_UNDERWORLD
+    .BYTE SONG_LASTLEVEL
 
 GoToNextModePlayLevelSong:
     LDY CurLevel
