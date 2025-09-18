@@ -6,12 +6,47 @@
 .EXPORT DriveAudio
 
 
+.macro song_header s, i
+	.BYTE s + $08*i - SongTable
+.endmacro
+
 SongTable:
-    .BYTE $7D, $B5, $6E, $67, $7D, $AD, $64, $64
-    .BYTE $75, $7D, $85, $95, $7D, $8D, $95, $9D
-    .BYTE $A5, $BD, $C5, $CD, $D5, $DD, $D5, $E5
-    .BYTE $ED, $24, $2C, $34, $3C, $44, $34, $4C
-    .BYTE $54, $5C, $44, $F5
+	song_header SongHeaderOverworld, 1
+    song_header SongHeaderGanon, 0
+    song_header SongHeaderEndLevel, 0
+    song_header SongHeaderItemTaken, 0
+    song_header SongHeaderOverworld, 1
+    song_header SongHeaderLastLevel, 0
+    song_header SongHeaderUnknown, 0
+    song_header SongHeaderUnknown, 0
+    song_header SongHeaderOverworld, 0
+    song_header SongHeaderOverworld, 1
+    song_header SongHeaderOverworld, 2
+    song_header SongHeaderOverworld, 4
+    song_header SongHeaderOverworld, 1
+    song_header SongHeaderOverworld, 3
+    song_header SongHeaderOverworld, 4
+    song_header SongHeaderUnderworld, 0
+    song_header SongHeaderUnderworld, 1
+    song_header SongHeaderEnding, 0
+    song_header SongHeaderEnding, 1
+    song_header SongHeaderEnding, 2
+    song_header SongHeaderEnding, 3
+    song_header SongHeaderEnding, 4
+    song_header SongHeaderEnding, 3
+    song_header SongHeaderEnding, 5
+    song_header SongHeaderEnding, 6
+    song_header SongHeaderDemo, 0
+    song_header SongHeaderDemo, 1
+    song_header SongHeaderDemo, 2
+    song_header SongHeaderDemo, 3
+    song_header SongHeaderDemo, 4
+    song_header SongHeaderDemo, 2
+    song_header SongHeaderDemo, 5
+    song_header SongHeaderDemo, 6
+    song_header SongHeaderDemo, 7
+    song_header SongHeaderDemo, 4
+    song_header SongHeaderZelda, 0
 
 ; Description:
 ; Each song phrase is described by a header in this format:
@@ -25,10 +60,7 @@ SongTable:
 ; 6: Envelope selector
 ; 7: TODO:
 ;
-; Note that the last byte of the "Item taken" header overlaps
-; "End level", and "End level" overlaps "Overworld".
-;
-SongHeaderDemo0:
+SongHeaderDemo:
     .BYTE $20, $8B, $94, $3B, $1D, $4F, $80, $01
     .BYTE $20, $DC, $94, $27, $57, $23, $01, $80
     .BYTE $20, $A1, $95, $38, $17, $B8, $80, $80
@@ -38,33 +70,33 @@ SongHeaderDemo0:
     .BYTE $20, $20, $97, $3F, $27, $7C, $80, $80
     .BYTE $20, $8F, $97, $1D, $11, $0D, $80, $80
 
-; Unknown block
+SongHeaderUnknown:
     .BYTE $10, $A1, $8E
 
-SongHeaderItemTaken0:
-    .BYTE $10, $5D, $8E, $0D, $07, $00, $80
+SongHeaderItemTaken:
+    .BYTE $10, $5D, $8E, $0D, $07, $00, $80 ;$10  overlap
 
-SongHeaderEndLevel0:
-    .BYTE $10, $A4, $91, $46, $22, $00, $80
+SongHeaderEndLevel:
+    .BYTE $10, $A4, $91, $46, $22, $00, $80 ;$10  overlap
 
-SongHeaderOverworld0:
+SongHeaderOverworld:
     .BYTE $10, $70, $8E, $32, $5D, $8E, $01, $80
     .BYTE $10, $0F, $8F, $35, $16, $CE, $01, $80
     .BYTE $10, $55, $8F, $60, $26, $88, $01, $80
     .BYTE $10, $32, $90, $59, $2D, $A4, $01, $80
     .BYTE $10, $E4, $8F, $3B, $1A, $F2, $01, $80
 
-SongHeaderUnderworld0:
+SongHeaderUnderworld:
     .BYTE $00, $DD, $90, $45, $22, $00, $01, $01
     .BYTE $00, $3A, $91, $39, $1C, $00, $01, $01
 
-SongHeaderLastLevel0:
+SongHeaderLastLevel:
     .BYTE $10, $FD, $91, $A5, $53, $CD, $80, $80
 
-SongHeaderGanon0:
+SongHeaderGanon:
     .BYTE $10, $CC, $92, $22, $10, $00, $80, $01
 
-SongHeaderEnding0:
+SongHeaderEnding:
     .BYTE $08, $F7, $92, $22, $50, $59, $01, $80
     .BYTE $08, $F7, $92, $2F, $50, $59, $01, $80
     .BYTE $08, $52, $93, $7A, $1B, $C2, $80, $80
