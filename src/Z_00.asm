@@ -6,107 +6,128 @@
 .EXPORT DriveAudio
 
 
-.macro song_header s, i
-	.BYTE s + $08*i - SongTable
-.endmacro
+.MACRO song  name, index
+	.BYTE .IDENT(.CONCAT("Song", .STRING(name))) + $08*index - SongTable
+.ENDMACRO
 
 SongTable:
-	song_header SongHeaderOverworld, 1
-    song_header SongHeaderGanon, 0
-    song_header SongHeaderEndLevel, 0
-    song_header SongHeaderItemTaken, 0
-    song_header SongHeaderOverworld, 1
-    song_header SongHeaderLastLevel, 0
-    song_header SongHeaderUnknown, 0
-    song_header SongHeaderUnknown, 0
-    song_header SongHeaderOverworld, 0
-    song_header SongHeaderOverworld, 1
-    song_header SongHeaderOverworld, 2
-    song_header SongHeaderOverworld, 4
-    song_header SongHeaderOverworld, 1
-    song_header SongHeaderOverworld, 3
-    song_header SongHeaderOverworld, 4
-    song_header SongHeaderUnderworld, 0
-    song_header SongHeaderUnderworld, 1
-    song_header SongHeaderEnding, 0
-    song_header SongHeaderEnding, 1
-    song_header SongHeaderEnding, 2
-    song_header SongHeaderEnding, 3
-    song_header SongHeaderEnding, 4
-    song_header SongHeaderEnding, 3
-    song_header SongHeaderEnding, 5
-    song_header SongHeaderEnding, 6
-    song_header SongHeaderDemo, 0
-    song_header SongHeaderDemo, 1
-    song_header SongHeaderDemo, 2
-    song_header SongHeaderDemo, 3
-    song_header SongHeaderDemo, 4
-    song_header SongHeaderDemo, 2
-    song_header SongHeaderDemo, 5
-    song_header SongHeaderDemo, 6
-    song_header SongHeaderDemo, 7
-    song_header SongHeaderDemo, 4
-    song_header SongHeaderZelda, 0
+	song Overworld, 1
+    song Ganon, 0
+    song EndLevel, 0
+    song ItemTaken, 0
+    song Overworld, 1
+    song LastLevel, 0
+    song Unknown, 0
+    song Unknown, 0
+    song Overworld, 0
+    song Overworld, 1
+    song Overworld, 2
+    song Overworld, 4
+    song Overworld, 1
+    song Overworld, 3
+    song Overworld, 4
+    song Underworld, 0
+    song Underworld, 1
+    song Ending, 0
+    song Ending, 1
+    song Ending, 2
+    song Ending, 3
+    song Ending, 4
+    song Ending, 3
+    song Ending, 5
+    song Ending, 6
+    song Demo, 0
+    song Demo, 1
+    song Demo, 2
+    song Demo, 3
+    song Demo, 4
+    song Demo, 2
+    song Demo, 5
+    song Demo, 6
+    song Demo, 7
+    song Demo, 4
+    song Zelda, 0
 
+
+.MACRO song_header  note_length_table, song_script, triangle, square, noise, envelope, triangle_effect
+	.BYTE $08*note_length_table
+	.WORD song_script
+	.IFNBLANK triangle
+		.BYTE triangle, square, noise
+		.IF envelope
+			.BYTE $01
+		.ELSE
+			.BYTE $80
+		.ENDIF
+		.IFNBLANK triangle_effect
+			.IF triangle_effect
+				.BYTE $01
+			.ELSE
+				.BYTE $80
+			.ENDIF
+		.ENDIF
+	.ENDIF
+.ENDMACRO
+;
 ; Description:
 ; Each song phrase is described by a header in this format:
 ;
-; 0: Note length table base
+; 0: Note length table
 ; 1: Song script address low
 ; 2: Song script address high
 ; 3: Triangle note offset in script
 ; 4: Square 0 note offset in script
 ; 5: Noise note offset in script
 ; 6: Envelope selector
-; 7: TODO:
+; 7: Base note length (0 = short; 1 = long)
 ;
-SongHeaderDemo:
-    .BYTE $20, $8B, $94, $3B, $1D, $4F, $80, $01
-    .BYTE $20, $DC, $94, $27, $57, $23, $01, $80
-    .BYTE $20, $A1, $95, $38, $17, $B8, $80, $80
-    .BYTE $20, $F1, $95, $6C, $26, $68, $80, $80
-    .BYTE $20, $8D, $96, $3E, $25, $21, $80, $80
-    .BYTE $20, $EB, $96, $19, $0D, $31, $80, $80
-    .BYTE $20, $20, $97, $3F, $27, $7C, $80, $80
-    .BYTE $20, $8F, $97, $1D, $11, $0D, $80, $80
+SongDemo:
+    song_header 4, SongScriptDemo0,           $3B, $1D, $4F, 0, 1
+    song_header 4, SongScriptDemo0+$51,       $27, $57, $23, 1, 0
+    song_header 4, SongScriptDemo0+$116,      $38, $17, $B8, 0, 0
+    song_header 4, SongScriptDemo0+$166,      $6C, $26, $68, 0, 0
+    song_header 4, SongScriptDemo0+$202,      $3E, $25, $21, 0, 0
+    song_header 4, SongScriptDemo0+$260,      $19, $0D, $31, 0, 0
+    song_header 4, SongScriptDemo0+$295,      $3F, $27, $7C, 0, 0
+    song_header 4, SongScriptDemo0+$304,      $1D, $11, $0D, 0, 0
 
-SongHeaderUnknown:
-    .BYTE $10, $A1, $8E
+SongUnknown:
+    song_header 2, SongScriptOverworld0+$31  ;$10, $5D, $8E, 1, 1  overlap
 
-SongHeaderItemTaken:
-    .BYTE $10, $5D, $8E, $0D, $07, $00, $80 ;$10  overlap
+SongItemTaken:
+    song_header 2, SongScriptItemTaken0,      $0D, $07, $00, 0 ;1  overlap
 
-SongHeaderEndLevel:
-    .BYTE $10, $A4, $91, $46, $22, $00, $80 ;$10  overlap
+SongEndLevel:
+    song_header 2, SongScriptEndLevel0,       $46, $22, $00, 0 ;1  overlap
 
-SongHeaderOverworld:
-    .BYTE $10, $70, $8E, $32, $5D, $8E, $01, $80
-    .BYTE $10, $0F, $8F, $35, $16, $CE, $01, $80
-    .BYTE $10, $55, $8F, $60, $26, $88, $01, $80
-    .BYTE $10, $32, $90, $59, $2D, $A4, $01, $80
-    .BYTE $10, $E4, $8F, $3B, $1A, $F2, $01, $80
+SongOverworld:
+    song_header 2, SongScriptOverworld0,      $32, $5D, $8E, 1, 0
+    song_header 2, SongScriptOverworld0+$9F,  $35, $16, $CE, 1, 0
+    song_header 2, SongScriptOverworld0+$E5,  $60, $26, $88, 1, 0
+    song_header 2, SongScriptOverworld0+$1C2, $59, $2D, $A4, 1, 0
+    song_header 2, SongScriptOverworld0+$174, $3B, $1A, $F2, 1, 0
 
-SongHeaderUnderworld:
-    .BYTE $00, $DD, $90, $45, $22, $00, $01, $01
-    .BYTE $00, $3A, $91, $39, $1C, $00, $01, $01
+SongUnderworld:
+    song_header 0, SongScriptUnderworld0,     $45, $22, $00, 1, 1
+    song_header 0, SongScriptUnderworld0+$5D, $39, $1C, $00, 1, 1
 
-SongHeaderLastLevel:
-    .BYTE $10, $FD, $91, $A5, $53, $CD, $80, $80
+SongLastLevel:
+    song_header 2, SongScriptLastLevel0,      $A5, $53, $CD, 0, 0
 
-SongHeaderGanon:
-    .BYTE $10, $CC, $92, $22, $10, $00, $80, $01
+SongGanon:
+    song_header 2, SongScriptGanon0,          $22, $10, $00, 0, 1
 
-SongHeaderEnding:
-    .BYTE $08, $F7, $92, $22, $50, $59, $01, $80
-    .BYTE $08, $F7, $92, $2F, $50, $59, $01, $80
-    .BYTE $08, $52, $93, $7A, $1B, $C2, $80, $80
-    .BYTE $08, $86, $93, $46, $24, $8E, $01, $80
-    .BYTE $08, $9D, $93, $44, $23, $77, $01, $80
-    .BYTE $08, $ED, $93, $1B, $0E, $27, $01, $80
-    .BYTE $08, $1A, $94, $40, $1A, $6B, $80, $80
+SongEnding:
+    song_header 1, SongScriptEnding0,         $22, $50, $59, 1, 0
+    song_header 1, SongScriptEnding0,         $2F, $50, $59, 1, 0
+    song_header 1, SongScriptEnding0+$5B,     $7A, $1B, $C2, 0, 0
+    song_header 1, SongScriptEnding0+$8F,     $46, $24, $8E, 1, 0
+    song_header 1, SongScriptEnding0+$A6,     $44, $23, $77, 1, 0
+    song_header 1, SongScriptEnding0+$F6,     $1B, $0E, $27, 1, 0
+    song_header 1, SongScriptEnding0+$123,    $40, $1A, $6B, 0, 0
 
-SongHeaderZelda:
-    .BYTE $10, $C4, $97, $3F, $20, $00, $80, $80
+SongZelda:
+    song_header 2, SongScriptZelda0,          $3F, $20, $00, 0, 0
 
 SongScriptItemTaken0:
     .INCBIN "dat/SongScriptItemTaken0.dat"
@@ -819,7 +840,7 @@ PrepPhrase:
     LDA SongTable-1, Y
     TAY
     LDA SongTable, Y
-    STA NoteLengthTableBase
+    STA NoteLengthTable
     LDA SongTable+1, Y
     STA SongScriptPtrLo
     LDA SongTable+2, Y
@@ -1119,16 +1140,16 @@ GetSongNoiseNoteLength:
 GetSongNoteLength:
     AND #$07
     CLC
-    ADC NoteLengthTableBase
+    ADC NoteLengthTable
     TAY
-    LDA NoteLengthTable0, Y
+    LDA NoteLengthTables, Y
     RTS
 
 GetSongNoteLengthWithAbsIndex:
     ; Begin unverified code 1EF1
     AND #$07
     TAY
-    LDA NoteLengthTable0, Y
+    LDA NoteLengthTables, Y
     RTS
     ; End unverified code
 
@@ -1212,19 +1233,11 @@ FlameSfxNotes:
     .BYTE $1A, $1A, $1C, $1D, $1D, $1E, $1E, $1F
     .BYTE $1F, $1E, $1A, $19, $16, $13, $11, $11
 
-NoteLengthTable0:
+NoteLengthTables:
     .BYTE $03, $0A, $01, $14, $05, $28, $3C, $70
-
-NoteLengthTable1:
     .BYTE $07, $1B, $35, $14, $0D, $28, $3C, $50
-
-NoteLengthTable2:
     .BYTE $06, $0C, $08, $18, $24, $30, $48, $10
-
-NoteLengthTable3:
     .BYTE $07, $0D, $09, $1B, $24, $36, $48, $10
-
-NoteLengthTable4:
     .BYTE $3C, $50, $0A, $05, $14, $0D, $28, $0E
 
 .SEGMENT "BANK_00_ISR"
