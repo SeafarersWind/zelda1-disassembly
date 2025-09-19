@@ -4139,7 +4139,7 @@ CheckBossSoundEffectUW:
     TAX
     LDA BossSoundEffects, X
     BEQ :+                      ; If the room has no boss sound effect, go turn off any that might be playing.
-    ORA #$80                    ; Add the flag to repeat
+    ORA #SAMPLE_REPEAT          ; Add the flag to repeat
     STA SampleRequest
     RTS
 :
@@ -5231,7 +5231,7 @@ PrepareWriteHorizontalDoorTransferRecords:
     CMP #$05
     BCC :+
     PHA
-    LDA #$04                    ; Door sound
+    LDA #SAMPLE_DOOR            ; Door sound
     JSR PlaySample
     PLA
 :

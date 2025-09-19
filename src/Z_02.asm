@@ -1769,7 +1769,7 @@ ModeE_ResetVariables:
     RTS
 
 DeleteSlot:
-    LDA #$08                    ; "Hurt" sound effect
+    LDA #SAMPLE_HURT            ; "Hurt" sound effect
     STA SampleRequest
     LDY CurSaveSlot
     LDX SlotToBlankNameTransferBufEndOffset, Y

@@ -67,6 +67,17 @@ const_bit SFX_SEA         ; $20
 const_bit
 const_bit SFX_MUTESFX     ; $80
 
+const_reset
+const_bit SAMPLE_OFF      ; $00
+const_bit SAMPLE_BEAM     ; $01
+const_bit SAMPLE_BOSSCRY  ; $02
+const_bit SAMPLE_DOOR     ; $04
+const_bit SAMPLE_HURT     ; $08
+const_bit SAMPLE_ROAR3    ; $10
+const_bit SAMPLE_ROAR2    ; $20
+const_bit SAMPLE_ROAR1    ; $40
+const_bit SAMPLE_REPEAT   ; $80
+
 
 .MACRO const  const_name
 	const_name = const_value

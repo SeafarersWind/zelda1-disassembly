@@ -186,7 +186,7 @@ PlayBossHitCryIfNeeded:
     LDA ObjInvincibilityTimer, X
     CMP #$10
     BNE :+
-    LDA #$02
+    LDA #SAMPLE_BOSSCRY
     STA SampleRequest
 :
     RTS
@@ -4844,7 +4844,7 @@ InitAquamentus:
     ; Aquamentus is invincible to boomerang and fire.
     LDA #$E2
     STA ObjInvincibilityMask, X
-    LDA #$10                    ; Play Aquamentus/Gleeok/Ganon roar.
+    LDA #SAMPLE_ROAR3           ; Play Aquamentus/Gleeok/Ganon roar.
     STA SampleRequest
 
     ; The monster goes at ($B0, $80).
@@ -4855,7 +4855,7 @@ InitAquamentus:
     RTS
 
 InitDigdogger1:
-    LDA #$40                    ; Play Digdogger/Manhandla/Patra roar.
+    LDA #SAMPLE_ROAR1           ; Play Digdogger/Manhandla/Patra roar.
     STA SampleRequest
 
     ; Set a random 8-way direction.
@@ -4898,7 +4898,7 @@ InitDigdogger2:
     RTS
 
 InitDodongo:
-    LDA #$20                    ; Play Dodongo/Gohma roar.
+    LDA #SAMPLE_ROAR2           ; Play Dodongo/Gohma roar.
     STA SampleRequest
 
     ; Randomly face left or right.
@@ -7640,7 +7640,7 @@ GleeokSegmentYs:
     .BYTE $6F, $74, $79, $7E, $83, $88
 
 InitGleeok:
-    LDA #$10                    ; Play Aquamentus/Gleeok/Ganon roar.
+    LDA #SAMPLE_ROAR3           ; Play Aquamentus/Gleeok/Ganon roar.
     STA SampleRequest
 
     ; Loop 6 times to initialize each segment of 4 necks.
@@ -7737,7 +7737,7 @@ ManhandlaSegmentOffsetsY:
     .BYTE $F0, $10, $00, $00, $00
 
 InitManhandla:
-    LDA #$40                    ; Play Digdogger/Manhandla/Patra roar.
+    LDA #SAMPLE_ROAR1           ; Play Digdogger/Manhandla/Patra roar.
     STA SampleRequest
 
     ; Choose a random 8-way direction.
@@ -7803,7 +7803,7 @@ InitManhandla:
     RTS
 
 InitGohma:
-    LDA #$20                    ; Play Dodongo/Gohma roar.
+    LDA #SAMPLE_ROAR2           ; Play Dodongo/Gohma roar.
     STA SampleRequest
 
     ; Invincible to everything but arrows.
@@ -8491,7 +8491,7 @@ Gohma_HandleWeaponCollision:
     LDA a:ObjDir, Y
     CMP #$08
     BNE @PlayParryTune
-    LDA #$02                    ; Boss hit sound effect
+    LDA #SAMPLE_BOSSCRY         ; Boss hit sound effect
     STA SampleRequest
 
     ; Deal damage and cry out.
@@ -9540,7 +9540,7 @@ InitPatra:
     ; Set flying speed $1F, and maximum $40.
     LDA #$1F
     STA Flyer_ObjSpeed, X
-    LDA #$40
+    LDA #$40 ; SAMPLE_ROAR1
     STA FlyingMaxSpeedFrac
     STA SampleRequest           ; Play Digdogger/Manhandla/Patra roar.
 
@@ -9579,9 +9579,9 @@ InitGanon:
 
     ; Set Link's timer to $40 for scene phase 0.
     STA ObjTimer
-    LDA #$02                    ; Boss hit sound effect. But here it's more of a shout.
+    LDA #SAMPLE_BOSSCRY         ; Boss hit sound effect. But here it's more of a shout.
     STA SampleRequest
-    LDA #$10                    ; Play Aquamentus/Gleeok/Ganon roar.
+    LDA #SAMPLE_ROAR3           ; Play Aquamentus/Gleeok/Ganon roar.
     JSR PlaySample
     JMP ResetObjMetastateAndTimer
 
@@ -10346,7 +10346,7 @@ Ganon_ScenePhase0:
     ; In this case, I think it means Ganon is shouting.
     CMP #$01
     BNE :+
-    LDA #$02
+    LDA #SAMPLE_BOSSCRY
     STA SampleRequest
 :
     RTS
@@ -11022,7 +11022,7 @@ ExtractHitPointValue:
     RTS
 
 PlayBossDeathCry:
-    LDA #$02
+    LDA #SAMPLE_BOSSCRY
     STA SampleRequest
     LDA #SFX_MUTESFX
     STA EffectRequest

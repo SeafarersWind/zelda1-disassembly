@@ -4657,7 +4657,7 @@ MakeSwordShot:
     BCC L1F854_Exit
 
 @SetUp:
-    LDA #$01                    ; Sword shot sound effect
+    LDA #SAMPLE_BEAM            ; Sword shot sound effect
     JSR PlaySample
 
     ; Go finish setting up a sword shot in initial state $10.

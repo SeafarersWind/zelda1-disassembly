@@ -5745,7 +5745,7 @@ Link_BeHarmed:
     LDY ObjType, X
     CPY #$2E
     BEQ :+
-    LDA #$08
+    LDA #SAMPLE_HURT
     JSR PlaySample
 :
     ; For every level of ring (1 or 2), divide the 16-bit damage amount in [0E:0D] by 2.
