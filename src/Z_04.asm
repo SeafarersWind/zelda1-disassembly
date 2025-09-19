@@ -746,7 +746,7 @@ UpdateBlock1Moving:
     ; Play the "secret revealed" tune.
     ; Change the tiles at the destination to the block tile.
     ; Set state 2, and increment BlockPushComplete.
-    LDA #$04
+    LDA #TUNE1_SECRET
     STA Tune1Request
     INC ReturnToBank4           ; Switch back to bank 4 when returning from the call below.
     LDA #$B0
@@ -1901,7 +1901,7 @@ EndInitFlyer:
 
 InitPondFairy:
     ; Play "item taken" sound effect.
-    LDA #$08
+    LDA #TUNE1_ITEM
     STA Tune1Request
 
     ; The fairy goes at location ($78, $7D).
@@ -4094,7 +4094,7 @@ Flyer_SetFlyingStateAnd6Turns:
     RTS
 
 PlaySecretFoundTune:
-    LDA #$04
+    LDA #TUNE1_SECRET
     STA Tune1Request
     RTS
 
@@ -7467,7 +7467,7 @@ ShootMagicShot:
     BNE L11F7E_Exit
 
     ; Else play the magic sound, shoot, and return.
-    LDA #$04
+    LDA #TUNE0_MAGIC
     STA Tune0Request
     JMP ShootLimited
 
@@ -8499,7 +8499,7 @@ Gohma_HandleWeaponCollision:
     JSR PlayBossDeathCryIfNeeded
 
 @PlayParryTune:
-    LDA #$01
+    LDA #TUNE0_SHIELD
     STA Tune0Request
     RTS
 
@@ -10976,7 +10976,7 @@ Ganon_ActivateRoomItem:
     STA ObjState+19
 
     ; Play "item appears" tune.
-    LDA #$02
+    LDA #TUNE1_APPEAR
     STA Tune1Request
 
 @Exit:
@@ -11444,7 +11444,7 @@ IsDarkRoom_Bank4:
 
 SetUpFairyObject:
     ; Play "fairy appears" tune. It's also "object taken".
-    LDA #$08
+    LDA #TUNE1_ITEM
     STA Tune1Request
     JSR ResetFlyerState
 

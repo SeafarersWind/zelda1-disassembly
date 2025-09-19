@@ -1532,7 +1532,7 @@ InitMode5Play:
     BNE @ChooseTileObjPalette
     LDA UndergroundExitType
     BNE @ChooseTileObjPalette
-    LDA #$04
+    LDA #TUNE1_SECRET
     STA Tune1Request
 
 @ChooseTileObjPalette:
@@ -2011,7 +2011,7 @@ BeginUpdateWorld:
     AND #$0F
     BNE @CheckUW
     LDA Tune0Request
-    ORA #$40
+    ORA #TUNE0_LOWHEALTH
     STA Tune0Request
 
 @CheckUW:
@@ -2508,7 +2508,7 @@ FluteRoomSecretsOW:
 
 WieldFlute:
     ; Play the flute's tune.
-    LDA #$10
+    LDA #TUNE1_FLUTE
     STA Tune1Request
 
     ; Set the flute timer for $98 frames.
@@ -4570,7 +4570,7 @@ UpdateSwordOrRod:
 
 @MakeMagicShot:
     ; Play "magic shot" tune.
-    LDA #$04
+    LDA #TUNE0_MAGIC
     STA Tune0Request
 
     ; Activate the shot object (state $80).
@@ -5800,7 +5800,7 @@ DecrementInvincibilityTimer:
     RTS
 
 UpdateDeadDummy:
-    LDA #$20                    ; Monster died sound effect
+    LDA #TUNE1_KILL             ; Monster died sound effect
     STA Tune1Request
     LDA #$10                    ; First metastate of death spark
     STA ObjMetastate, X

@@ -1,10 +1,8 @@
 .INCLUDE "Variables.inc"
 .INCLUDE "Constants.inc"
+.INCLUDE "Macros.inc"
 
 .SEGMENT "BANK_00_00"
-;
-; Music
-; ----------------------------------------------------------------------------
 
 .EXPORT DriveAudio
 .EXPORT SONG_LASTLEVEL
@@ -205,34 +203,145 @@ DriveAudio:
     STA SongRequest
     RTS
 
-TuneScripts0:
-    .BYTE $1C, $4C, $27, $5C, $46, $67, $07, $95
-    .BYTE $50, $08, $08, $08, $08, $08, $90, $08
-    .BYTE $08, $08, $08, $08, $08, $08, $08, $08
-    .BYTE $08, $08, $08, $00, $82, $4A, $48, $4A
-    .BYTE $08, $08, $08, $08, $08, $08, $00, $9F
-    .BYTE $1E, $22, $24, $26, $9F, $28, $2A, $2C
-    .BYTE $2E, $9A, $28, $2A, $2C, $2E, $9C, $28
-    .BYTE $2A, $2C, $2E, $96, $28, $2A, $2C, $2E
-    .BYTE $98, $28, $2A, $2C, $2E, $00, $99, $42
-    .BYTE $4A, $50, $54, $00, $99, $70, $0A, $70
-    .BYTE $0E, $70, $10, $9F, $70, $2A, $12, $1E
-    .BYTE $2A, $70, $1E, $00, $9A, $42, $08, $08
-    .BYTE $56, $08, $08, $00, $08, $08, $00, $9F
-    .BYTE $40, $30, $40, $3A, $28, $00
+Tune0Scripts:
+	table_start Tune0Scripts
+	table Tune0Shield    ; TUNE0_SHIELD
+	table Tune0Hurt      ; TUNE0_HURT
+	table Tune0Magic     ; TUNE0_MAGIC
+	table Tune0Key       ; TUNE0_KEY
+	table Tune0Heart     ; TUNE0_HEART
+	table Tune0Bomb      ; TUNE0_BOMB
+	table Tune0LowHealth ; TUNE0_LOWHEALTH
+	table_end
 
-L18C9_SilenceSong:
+Tune0LowHealth:
+    .BYTE TUNE_VOLUME | 5
+    .BYTE NOTE_D5
+    .BYTE NOTE
+    .BYTE NOTE 
+    .BYTE NOTE 
+    .BYTE NOTE 
+    .BYTE NOTE 
+    .BYTE TUNE_VOLUME | 0
+    .BYTE NOTE 
+    .BYTE NOTE 
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE TUNE_END
+
+Tune0Shield:
+    .BYTE TUNE_ENVELOPE | 2
+    .BYTE NOTE_B4
+    .BYTE NOTE_A4
+    .BYTE NOTE_B4
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE NOTE
+    .BYTE TUNE_END
+
+Tune0Magic:
+	.BYTE TUNE_VOLUME | 15
+	.BYTE NOTE_C3, NOTE_D3, NOTE_Ds3, NOTE_E3
+	.BYTE TUNE_VOLUME | 15
+	.BYTE NOTE_F3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_G3
+	.BYTE NOTE_Gs3
+	.BYTE TUNE_VOLUME | 10
+	.BYTE NOTE_F3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_G3
+	.BYTE NOTE_Gs3
+	.BYTE TUNE_VOLUME | 12
+	.BYTE NOTE_F3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_G3
+	.BYTE NOTE_Gs3
+	.BYTE TUNE_VOLUME | 6
+	.BYTE NOTE_F3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_G3
+	.BYTE NOTE_Gs3
+	.BYTE TUNE_VOLUME | 8
+	.BYTE NOTE_F3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_G3
+	.BYTE NOTE_Gs3
+	.BYTE TUNE_END
+
+Tune0Heart:
+	.BYTE TUNE_VOLUME | 9
+	.BYTE NOTE_G4
+	.BYTE NOTE_B4
+	.BYTE NOTE_D5
+	.BYTE NOTE_F5
+	.BYTE TUNE_END
+
+Tune0Hurt:
+	.BYTE TUNE_VOLUME | 9
+	.BYTE NOTE_C1
+	.BYTE NOTE_D2
+	.BYTE NOTE_C1
+	.BYTE NOTE_E2
+	.BYTE NOTE_C1
+	.BYTE NOTE_F2
+	.BYTE TUNE_VOLUME | 15
+	.BYTE NOTE_C1
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_Fs2
+	.BYTE NOTE_C3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_C1
+	.BYTE NOTE_C3
+	.BYTE TUNE_END
+
+Tune0Key:
+	.BYTE TUNE_VOLUME | 10
+	.BYTE NOTE_G4
+	.BYTE NOTE
+	.BYTE NOTE
+	.BYTE NOTE_G5
+	.BYTE NOTE
+	.BYTE NOTE
+	.BYTE TUNE_END
+
+; unused
+	.BYTE NOTE
+	.BYTE NOTE
+	.BYTE TUNE_END
+
+Tune0Bomb:
+	.BYTE TUNE_VOLUME | 15
+	.BYTE NOTE_F4
+	.BYTE NOTE_A3
+	.BYTE NOTE_F4
+	.BYTE NOTE_D4
+	.BYTE NOTE_F3
+	.BYTE TUNE_END
+
+Tune0MuteSong:
     JMP SilenceSong
 
 DriveTune0:
     LDA Tune0Request
 
     ; Tune $80 is only a signal to silence the song.
-    BMI L18C9_SilenceSong
+    BMI Tune0MuteSong    ; TUNE0_MUTESONG
     BEQ @CheckCurrentTune
 
     ; If the requested tune is not "heart warning", then go play it.
-    CMP #$40
+    CMP #TUNE0_LOWHEALTH
     BNE @ChangeTune
 
     ; Else only play "heart warning" if nothing else is playing.
@@ -252,13 +361,13 @@ DriveTune0:
     INY
     LSR
     BCC :-
-    LDA TuneScripts0-1, Y
+    LDA Tune0Scripts-1, Y
     STA TunePtr0
 
 @KeepPlaying:
     LDY TunePtr0
     INC TunePtr0
-    LDA TuneScripts0, Y
+    LDA Tune0Scripts, Y
     BMI @PrepNote
     BNE @PlayNote
 
@@ -267,7 +376,7 @@ DriveTune0:
     STX Sq0Duty_4000
     LDX #$18
     STX Sq0Length_4003
-    LDX #$00
+    LDX #$00 ; TUNE0_OFF
     STX Sq0Timer_4002
     STX Tune0
     RTS
@@ -276,7 +385,7 @@ DriveTune0:
     STA Sq0Duty_4000
     LDY TunePtr0
     INC TunePtr0
-    LDA TuneScripts0, Y
+    LDA Tune0Scripts, Y
 
 @PlayNote:
     JSR EmitSquareNote0
@@ -301,7 +410,7 @@ PlayArrowSfx:
 
     ; If "heart taken" is requested in tune channel 0, then cancel it.
     LDA Tune0Request
-    AND #$EF
+    AND #<~TUNE0_HEART
     BNE ContinueArrowSfx
     STA Tune0Request
 
@@ -316,7 +425,7 @@ PlayStairsSfx:
     STA EffectCounter
 :
     LDA #$0D
-    STA $68                     ; The sound of one step lasts $C frames.
+    STA $68                     ; The sound of one step lasts $C frames. TODO: [$0068]?
 
 ContinueStairsSfx:
     DEC $68
@@ -466,27 +575,157 @@ BombSfxNotes:
     .BYTE $6F, $6F, $7E, $8F, $9E, $AF, $BE, $CF
     .BYTE $DE, $EF, $FE, $FD, $FE, $FF, $FF, $FE
 
-TuneScripts1:
-    .BYTE $0C, $08, $11, $1C, $28, $33, $40, $62
-    .BYTE $8A, $4E, $58, $60, $8A, $5E, $94, $60
-    .BYTE $00, $8A, $42, $06, $3C, $30, $2E, $3E
-    .BYTE $44, $CC, $02, $00, $83, $40, $42, $48
-    .BYTE $4A, $02, $50, $4C, $54, $94, $56, $00
-    .BYTE $94, $3A, $3E, $A8, $50, $8A, $4E, $02
-    .BYTE $CC, $4A, $00, $81, $28, $3E, $24, $82
-    .BYTE $3A, $81, $16, $30, $1A, $82, $34, $00
-    .BYTE $94, $56, $42, $02, $4C, $52, $42, $5C
-    .BYTE $4A, $5A, $02, $4C, $5A, $56, $02, $50
-    .BYTE $4C, $5A, $02, $54, $5A, $58, $02, $50
-    .BYTE $54, $4C, $42, $02, $4C, $50, $48, $4A
-    .BYTE $50, $00, $8A, $08, $08, $08, $85, $3C
-    .BYTE $3A, $38, $36, $3A, $38, $36, $34, $38
-    .BYTE $36, $34, $32, $36, $34, $32, $30, $34
-    .BYTE $32, $30, $2E, $2A, $28, $A8, $26, $00
+Tune1Scripts:
+	table_start Tune1Scripts
+	table Tune1Rupee    ; TUNE1_RUPEE
+	table Tune1Appear   ; TUNE1_APPEAR
+	table Tune1Secret   ; TUNE1_SECRET
+	table Tune1Item     ; TUNE1_ITEM
+	table Tune1Flute    ; TUNE1_FLUTE
+	table Tune1Kill     ; TUNE1_KILL
+	table Tune1GameOver ; TUNE1_GAMEOVER
+	table Tune1Death    ; TUNE1_DEATH
+	table_end
+
+Tune1Appear:
+	.BYTE TUNE_ENVELOPE | 10
+	.BYTE NOTE_Cs5
+	.BYTE NOTE_Gs5
+	.BYTE NOTE_Gs6
+	; fallthrough
+Tune1Rupee:
+	.BYTE TUNE_ENVELOPE | 10
+	.BYTE NOTE_Cs6
+	.BYTE TUNE_VOLUME | 4
+	.BYTE NOTE_Gs6
+	.BYTE TUNE_END
+
+Tune1Secret:
+	.BYTE TUNE_ENVELOPE | 10
+	.BYTE NOTE_G4
+	.BYTE NOTE_Fs4
+	.BYTE NOTE_Ds4
+	.BYTE NOTE_A3
+	.BYTE NOTE_Gs3
+	.BYTE NOTE_E4
+	.BYTE NOTE_Gs4
+	.BYTE TUNE_ENVELOPE | 12 | $40
+	.BYTE NOTE_C5
+	.BYTE TUNE_END
+
+Tune1Item:
+	.BYTE TUNE_ENVELOPE | 3
+	.BYTE NOTE_F4
+	.BYTE NOTE_G4
+	.BYTE NOTE_A4
+	.BYTE NOTE_B4
+	.BYTE NOTE_C5
+	.BYTE NOTE_D5
+	.BYTE NOTE_E5
+	.BYTE NOTE_F5
+	.BYTE TUNE_VOLUME | 4
+	.BYTE NOTE_G5
+	.BYTE TUNE_END
+
+Tune1Flute:
+	.BYTE TUNE_VOLUME | 4
+	.BYTE NOTE_D4
+	.BYTE NOTE_E4
+	.BYTE TUNE_ENVELOPE | 8 | $20
+	.BYTE NOTE_D5
+	.BYTE TUNE_ENVELOPE | 10
+	.BYTE NOTE_Cs5
+	.BYTE NOTE_C5
+	.BYTE TUNE_ENVELOPE | 12 | $40
+	.BYTE NOTE_B4
+	.BYTE TUNE_END
+
+Tune1Kill:
+	.BYTE TUNE_ENVELOPE | 1
+	.BYTE NOTE_F3
+	.BYTE NOTE_E4
+	.BYTE NOTE_Ds3
+	.BYTE TUNE_ENVELOPE | 2
+	.BYTE NOTE_D4
+	.BYTE TUNE_ENVELOPE | 1
+	.BYTE NOTE_Gs2
+	.BYTE NOTE_A3
+	.BYTE NOTE_As2
+	.BYTE TUNE_ENVELOPE | 2
+	.BYTE NOTE_B3
+	.BYTE TUNE_END
+
+Tune1GameOver:
+	.BYTE TUNE_VOLUME | 4
+	.BYTE NOTE_G5
+	.BYTE NOTE_G4
+	.BYTE NOTE_C5
+	.BYTE NOTE_E5
+	.BYTE NOTE_Ds5
+	.BYTE NOTE_G4
+	.BYTE NOTE_B5
+	.BYTE NOTE_B4
+	.BYTE NOTE_A5
+	.BYTE NOTE_C5
+	.BYTE NOTE_E5
+	.BYTE NOTE_A5
+	.BYTE NOTE_G5
+	.BYTE NOTE_C5
+	.BYTE NOTE_D5
+	.BYTE NOTE_E5
+	.BYTE NOTE_A5
+	.BYTE NOTE_C5
+	.BYTE NOTE_F5
+	.BYTE NOTE_A5
+	.BYTE NOTE_Gs5
+	.BYTE NOTE_C5
+	.BYTE NOTE_D5
+	.BYTE NOTE_F5
+	.BYTE NOTE_E5
+	.BYTE NOTE_G4
+	.BYTE NOTE_C5
+	.BYTE NOTE_E5
+	.BYTE NOTE_D5
+	.BYTE NOTE_A4
+	.BYTE NOTE_B4
+	.BYTE NOTE_D5
+	.BYTE TUNE_END
+
+Tune1Death:
+	.BYTE TUNE_ENVELOPE | 10
+	.BYTE NOTE
+	.BYTE NOTE
+	.BYTE NOTE
+	.BYTE TUNE_ENVELOPE | 5
+	.BYTE NOTE_Ds4
+	.BYTE NOTE_D4
+	.BYTE NOTE_Cs4
+	.BYTE NOTE_C4
+	.BYTE NOTE_D4
+	.BYTE NOTE_Cs4
+	.BYTE NOTE_C4
+	.BYTE NOTE_B3
+	.BYTE NOTE_Cs4
+	.BYTE NOTE_C4
+	.BYTE NOTE_B3
+	.BYTE NOTE_As3
+	.BYTE NOTE_C4
+	.BYTE NOTE_B3
+	.BYTE NOTE_As3
+	.BYTE NOTE_A3
+	.BYTE NOTE_B3
+	.BYTE NOTE_As3
+	.BYTE NOTE_A3
+	.BYTE NOTE_Gs3
+	.BYTE NOTE_Fs3
+	.BYTE NOTE_F3
+	.BYTE TUNE_ENVELOPE | 8 | $20
+	.BYTE NOTE_E3
+	.BYTE TUNE_END
 
 DriveTune1:
     LDA Tune1Request
-    BMI @SilenceThenPlay
+    BMI @SilenceThenPlay ; TUNE1_DEATH
     BNE @ChangeTune
     LDA Tune1
     BNE @KeepPlaying
@@ -504,7 +743,7 @@ DriveTune1:
     INY
     LSR
     BCC :-
-    LDA TuneScripts1-1, Y
+    LDA Tune1Scripts-1, Y
     STA TunePtr1
     LDA #$01
     STA NoteCounterTune1
@@ -514,7 +753,7 @@ DriveTune1:
     BNE @CheckVibrate
     LDY TunePtr1
     INC TunePtr1
-    LDA TuneScripts1, Y
+    LDA Tune1Scripts, Y
     BMI @PrepNote
     BNE @PlayNote
 
@@ -522,13 +761,13 @@ DriveTune1:
     ;
     ; If tune is "Game Over", then go play it again.
     LDA Tune1
-    CMP #$40
+    CMP #TUNE1_GAMEOVER
     BEQ @ChangeTune
     LDX #$90
     STX Sq1Duty_4004
     LDX #$18
     STX Sq1Length_4007
-    LDX #$00
+    LDX #$00 ; TUNE1_OFF
     STX Tune1
     STX Sq1Timer_4006
     RTS
@@ -538,7 +777,7 @@ DriveTune1:
     STA NoteLengthTune1
     LDY TunePtr1
     INC TunePtr1
-    LDA TuneScripts1, Y
+    LDA Tune1Scripts, Y
 
 @PlayNote:
     JSR EmitSquareNote1
@@ -554,7 +793,7 @@ DriveTune1:
 @CheckVibrate:
     ; If the tune is not one of "flute" or "Link dying", then return.
     LDA Tune1
-    AND #$90
+    AND #TUNE1_FLUTE | TUNE1_DEATH
     BEQ @Exit
     LDY CustomEnvelopeOffsetTune1
     BEQ :+
@@ -1175,21 +1414,44 @@ StairsSfxNotes:
 ; Big-endian 16-bit period values.
 ;
 NotePeriodTable:
+	;00   G7        C5        C#2       F#4
     .BYTE $00, $23, $00, $6A, $03, $27, $00, $97
+    ;08   -         D2        D#2       E2
     .BYTE $00, $00, $02, $F9, $02, $CF, $02, $A6
+    ;10   F2        F#2       G2        G#2
     .BYTE $02, $80, $02, $5C, $02, $3A, $02, $1A
+    ;18   A2        A#2       B2        C3
     .BYTE $01, $FC, $01, $DF, $01, $C4, $01, $AB
+    ;20   C#3       D3        D#3       E3
     .BYTE $01, $93, $01, $7C, $01, $67, $01, $53
+    ;28   F3        F#3       G3        G#3
     .BYTE $01, $40, $01, $2E, $01, $1D, $01, $0D
+    ;30   A3        A#3       B3        C4
     .BYTE $00, $FE, $00, $EF, $00, $E2, $00, $D5
+    ;38   C#4       D4        D#4       E4
     .BYTE $00, $C9, $00, $BE, $00, $B3, $00, $A9
+    ;40   F4        G4        G#4       A#4
     .BYTE $00, $A0, $00, $8E, $00, $86, $00, $77
+    ;48   A4        B4        E5        C#5
     .BYTE $00, $7E, $00, $71, $00, $54, $00, $64
+    ;50   D5        D#5       F5        G5
     .BYTE $00, $5F, $00, $59, $00, $50, $00, $47
+    ;58   G#5       A5        B5        C#6
     .BYTE $00, $43, $00, $3F, $00, $38, $00, $32
+    ;60   G#6       D#1       E1        F1
     .BYTE $00, $21, $05, $4D, $05, $01, $04, $B9
+    ;68   G#1       A1        A#1       B1
     .BYTE $04, $35, $03, $F8, $03, $BF, $03, $89
+    ;70   C2
     .BYTE $03, $57
+    ;
+    ;            D#1 E1  F1          G#1 A1  A#1 B1
+	;C2  C#2 D2  D#2 E2  F2  F#2 G2  G#2 A2  A#2 B2
+	;C3  C#3 D3  D#3 E3  F3  F#3 G3  G#3 A3  A#3 B3 
+    ;C4  C#4 D4  D#4 E4  F4  F#4 G4  G#4 A4  A#4 B4
+    ;C5  C#5 D5  D#5 E5  F5      G5  G#5 A5      B5
+    ;C6  C#6                         G#6
+    ;-
 
 ; Returns:
 ; A: starting custom envelope offset

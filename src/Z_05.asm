@@ -2090,7 +2090,7 @@ InitMode11_Sub1:
     INC IsUpdatingMode          ; Start updating.
 
 SilenceSound:
-    LDA #$80
+    LDA #TUNE0_MUTESONG
     STA Tune0Request
     STA EffectRequest
 
@@ -2210,7 +2210,7 @@ UpdateMode8ContinueQuestion_Full:
     LDA ButtonsPressed
     AND #$20
     BEQ @DrawCursor             ; If Select was pressed,
-    LDA #$01                    ; Play a short sound for it (same as rupee taken).
+    LDA #TUNE0_SHIELD           ; Play a short sound for it (same as shield parry).
     STA Tune0Request
 
     ; The selection is tracked by the submode.
@@ -2363,7 +2363,7 @@ CheckUnderworldSecrets:
     ; Else activate the room item, and play the "item appears" tune.
     LDA #$00
     STA ObjState+19
-    LDA #$02
+    LDA #TUNE1_APPEAR
     STA Tune1Request
 
 CheckSecretTriggerNone:
@@ -2544,7 +2544,7 @@ UpdateMode11Death_Sub1:
     ; Submode 1 prepares bottom half of play area attributes.
     ;
     ; Play death tune.
-    LDA #$80
+    LDA #TUNE1_DEATH
     STA Tune1Request
 
 UpdateMode11Death_Sub0:
@@ -2680,7 +2680,7 @@ UpdateMode11Death_SubA:
     STA Sprites+79
     DEC DeathModeCounter        ; Count down how long you see the spark.
     BNE L14D55_Exit             ; If not zero yet, then return.
-    LDA #$10                    ; Play "heart taken" tune.
+    LDA #TUNE0_HEART            ; Play "heart taken" tune.
     STA Tune0Request
     LDA #$F8                    ; Hide the Link/spark sprites.
     STA Sprites+72
@@ -2708,7 +2708,7 @@ UpdateMode11Death_SubC:
     JSR EndGameMode
     LDA #$08                    ; Go to the Continue Question mode.
     STA GameMode
-    LDA #$40                    ; Request Game Over music.
+    LDA #TUNE1_GAMEOVER         ; Request Game Over music.
     STA Tune1Request
     LDX CurSaveSlot
     LDA DeathCounts, X          ; Increase the death count for current profile.
@@ -6483,7 +6483,7 @@ InitMode6:
     AND #$07
     CMP #$02
     BNE :+
-    LDA #$04                    ; Play "found secret" tune.
+    LDA #TUNE1_SECRET           ; Play "found secret" tune.
     STA Tune1Request
 :
     PLA
@@ -6764,7 +6764,7 @@ InitMode9_WalkCellar:
 World_FillHearts:
     LDA World_IsFillingHearts
     BEQ @Exit                   ; If not filling hearts, then return.
-    LDA #$10                    ; Play the "heart taken" tune.
+    LDA #TUNE0_HEART            ; Play the "heart taken" tune.
     STA Tune0Request
     LDA HeartPartial
     CMP #$F8
@@ -7321,7 +7321,7 @@ SetTargetMode:
     ; If the target mode is not 9 (as in it's a cave), then silence all sound.
     CMP #$09
     BEQ :+
-    JSR SilenceAllSound
+    JSR SilenceAllSound ; TUNE1_OFF
     STA Tune1Request
 
     ; Reset the flute timer.
@@ -7524,7 +7524,7 @@ EndGameMode12:
     LDA #$02
     STA GameMode
     STA UndergroundExitType     ; Set to type 2: dungeon level.
-    LDA #$80                    ; Silence the song.
+    LDA #TUNE0_MUTESONG         ; Silence the song.
     STA Tune0Request
 
 MaskCurPpuMaskGrayscale:
@@ -8054,7 +8054,7 @@ UpdateSubmenuSelection:
     BCS FindAndSelectOccupiedItemSlot
 
     ; Cue the "selection changed" tune.
-    LDX #$01
+    LDX #TUNE1_RUPEE
     STX Tune1Request
 
     ; Move the selection in the input direction.
@@ -8077,7 +8077,7 @@ UpdateSubmenuSelection:
     BNE :+
 
 @CancelTune:
-    LSR Tune1Request
+    LSR Tune1Request ; TUNE1_OFF
 :
     RTS
 
