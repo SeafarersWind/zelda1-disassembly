@@ -11024,7 +11024,7 @@ ExtractHitPointValue:
 PlayBossDeathCry:
     LDA #$02
     STA SampleRequest
-    LDA #$80
+    LDA #SFX_MUTESFX
     STA EffectRequest
     RTS
 

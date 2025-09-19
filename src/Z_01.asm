@@ -3305,10 +3305,10 @@ FormatHeartsInTextBuf:
     RTS
 
 SilenceAllSound:
-    LDA #TUNE0_MUTESONG
+    LDA #TUNE0_MUTESONG ; SFX_MUTESFX
     STA Tune0Request
     STA EffectRequest
-    ASL
+    ASL ;TUNE0_OFF TUNE1_OFF
     STA Tune0
     STA Tune1
     RTS
@@ -4025,7 +4025,7 @@ WieldCandle:
     ; Activate the fire object. Initial state = $21 (moving fire).
     LDA #$21
     STA ObjState, X
-    LDA #$04                    ; Flame sound effect
+    LDA #SFX_FLAME              ; Flame sound effect
     JSR PlayEffect
 
     ; Each animation frame lasts 4 frames.

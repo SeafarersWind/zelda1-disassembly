@@ -4,10 +4,14 @@
 
 .MACRO const_bit  const_name
 	.IFNDEF const_value
-		const_name = $00
+		.IFNBLANK const_name
+			const_name = $00
+		.ENDIF
 		const_value .SET $01
 	.ELSE
-		const_name = const_value
+		.IFNBLANK const_name
+			const_name = const_value
+		.ENDIF
 		.IF const_value = $00
 			const_value .SET $01
 		.ELSEIF const_value < $80
@@ -52,6 +56,17 @@ const_bit TUNE1_KILL      ; $20
 const_bit TUNE1_GAMEOVER  ; $40
 const_bit TUNE1_DEATH     ; $80
 
+const_reset
+const_bit SFX_OFF         ; $00
+const_bit SFX_SWORD       ; $01
+const_bit SFX_ARROW       ; $02
+const_bit SFX_FLAME       ; $04
+const_bit SFX_STAIRS      ; $08
+const_bit SFX_BOMB        ; $10
+const_bit SFX_SEA         ; $20
+const_bit
+const_bit SFX_MUTESFX     ; $80
+
 
 .MACRO const  const_name
 	const_name = const_value
@@ -63,6 +78,15 @@ const_bit TUNE1_DEATH     ; $80
 	const_value .SET const_value + 2
 .ENDMACRO
 
+; Available notes
+;             D#1 E1  F1          G#1 A1  A#1 B1
+; C2  C#2 D2  D#2 E2  F2  F#2 G2  G#2 A2  A#2 B2
+; C3  C#3 D3  D#3 E3  F3  F#3 G3  G#3 A3  A#3 B3 
+; C4  C#4 D4  D#4 E4  F4  F#4 G4  G#4 A4  A#4 B4
+; C5  C#5 D5  D#5 E5  F5      G5  G#5 A5      B5
+; C6  C#6                         G#6
+; -
+;
 const_reset
 constw NOTE_G7  ; $00
 constw NOTE_C5  ; $02

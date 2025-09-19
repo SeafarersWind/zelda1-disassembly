@@ -2041,7 +2041,7 @@ BeginUpdateWorld:
     BNE @CheckZora
     LDY RoomId
     LDA LevelBlockAttrsA, Y
-    AND #$04                    ; Sea sound effect
+    AND #SFX_SEA>>3             ; Sea sound effect
     ASL
     ASL
     ASL
@@ -4269,7 +4269,7 @@ AnimateBoomerangAndCheckCollision:
     STA ObjState, X
     CPX #$0D
     BCC CalcBoomerangFrame
-    LDY #$02                    ; Boomerang effect
+    LDY #SFX_ARROW              ; Boomerang effect
     JSR PlayBoomerangSfx
 
 DrawBoomerangAndCheckCollision:
@@ -4831,7 +4831,7 @@ UpdateBomb:
     PHA
     CMP #$03
     BNE @CheckState5
-    LDA #$10
+    LDA #SFX_BOMB
     JSR PlayEffect
 
 @CheckState5:

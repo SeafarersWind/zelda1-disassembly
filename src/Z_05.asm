@@ -1399,7 +1399,7 @@ InitMode10:
     BNE :+                      ; If player touched any stairs tile instead of a cave or dungeon entrance, go start updating.
     LDA #$00                    ; TODO: ?
     STA SongEnvelopeSelector
-    LDA #$08                    ; Stairs effect
+    LDA #SFX_STAIRS             ; Stairs effect
     STA EffectRequest
 
     ; Set the target Y coordinate $10 pixels below current one.
@@ -1603,7 +1603,7 @@ InitMode_EnterRoom:
     CLC
     ADC #$10
     STA ObjY                    ; But have Link start walking out from $10 pixels below.
-    LDA #$08                    ; Play walking sound effect.
+    LDA #SFX_STAIRS             ; Play walking sound effect.
     STA EffectRequest
 :
     ; This part is the same no matter if the player went
@@ -2875,7 +2875,7 @@ WieldSword:
     ; The initial state is 1.
     LDA #$01
     JSR WieldWeapon
-    LDA #$01                    ; Sword sound effect
+    LDA #SFX_SWORD              ; Sword sound effect
     JMP PlayEffect
 
 BoomerangLimits:
@@ -2969,7 +2969,7 @@ WieldArrow:
     ; If there are no rupees, return.
     LDA InvRupees
     BEQ WieldNothing
-    LDA #$02                    ; Boomerang/arrow sound effect
+    LDA #SFX_ARROW              ; Boomerang/arrow sound effect
     JSR PlayEffect
 
     ; Post a rupee to subtract.
@@ -4143,7 +4143,7 @@ CheckBossSoundEffectUW:
     STA SampleRequest
     RTS
 :
-    LDA #$80                    ; Silence sample and tune1.
+    LDA #SFX_MUTESFX            ; Silence sample and tune1.
     JMP PlayEffect
 
 ; Unknown block

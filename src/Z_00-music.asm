@@ -438,6 +438,11 @@ ContinueStairsSfx:
 :
     LDA StairsSfxNotes-1, Y
 
+; Params:
+; A: SFX Note vvvv.pppp
+;  p: Period
+;  v: Volume
+;
 PlaySfxNote:
     TAX
     AND #$0F
@@ -571,6 +576,9 @@ DriveEffect:
     JMP SilenceSfxIfEnded
 
 BombSfxNotes:
+; vvvv.pppp
+;  p: Period
+;  v: Volume
     .BYTE $1F, $2F, $2E, $3F, $3F, $4C, $4E, $5F
     .BYTE $6F, $6F, $7E, $8F, $9E, $AF, $BE, $CF
     .BYTE $DE, $EF, $FE, $FD, $FE, $FF, $FF, $FE
@@ -1406,6 +1414,9 @@ GetSongNoteLengthWithAbsIndex:
     .BYTE $CB
 
 StairsSfxNotes:
+; vvvv.pppp
+;  p: Period
+;  v: Volume
     .BYTE $0E, $0E, $4C, $6D, $8C, $CD
 
 ; Unknown block
@@ -1414,44 +1425,36 @@ StairsSfxNotes:
 ; Big-endian 16-bit period values.
 ;
 NotePeriodTable:
-	;00   G7        C5        C#2       F#4
+	;     G7        C5        C#2       F#4
     .BYTE $00, $23, $00, $6A, $03, $27, $00, $97
-    ;08   -         D2        D#2       E2
+    ;     -         D2        D#2       E2
     .BYTE $00, $00, $02, $F9, $02, $CF, $02, $A6
-    ;10   F2        F#2       G2        G#2
+    ;     F2        F#2       G2        G#2
     .BYTE $02, $80, $02, $5C, $02, $3A, $02, $1A
-    ;18   A2        A#2       B2        C3
+    ;     A2        A#2       B2        C3
     .BYTE $01, $FC, $01, $DF, $01, $C4, $01, $AB
-    ;20   C#3       D3        D#3       E3
+    ;     C#3       D3        D#3       E3
     .BYTE $01, $93, $01, $7C, $01, $67, $01, $53
-    ;28   F3        F#3       G3        G#3
+    ;     F3        F#3       G3        G#3
     .BYTE $01, $40, $01, $2E, $01, $1D, $01, $0D
-    ;30   A3        A#3       B3        C4
+    ;     A3        A#3       B3        C4
     .BYTE $00, $FE, $00, $EF, $00, $E2, $00, $D5
-    ;38   C#4       D4        D#4       E4
+    ;     C#4       D4        D#4       E4
     .BYTE $00, $C9, $00, $BE, $00, $B3, $00, $A9
-    ;40   F4        G4        G#4       A#4
+    ;     F4        G4        G#4       A#4
     .BYTE $00, $A0, $00, $8E, $00, $86, $00, $77
-    ;48   A4        B4        E5        C#5
+    ;     A4        B4        E5        C#5
     .BYTE $00, $7E, $00, $71, $00, $54, $00, $64
-    ;50   D5        D#5       F5        G5
+    ;     D5        D#5       F5        G5
     .BYTE $00, $5F, $00, $59, $00, $50, $00, $47
-    ;58   G#5       A5        B5        C#6
+    ;     G#5       A5        B5        C#6
     .BYTE $00, $43, $00, $3F, $00, $38, $00, $32
-    ;60   G#6       D#1       E1        F1
+    ;     G#6       D#1       E1        F1
     .BYTE $00, $21, $05, $4D, $05, $01, $04, $B9
-    ;68   G#1       A1        A#1       B1
+    ;     G#1       A1        A#1       B1
     .BYTE $04, $35, $03, $F8, $03, $BF, $03, $89
-    ;70   C2
+    ;     C2
     .BYTE $03, $57
-    ;
-    ;            D#1 E1  F1          G#1 A1  A#1 B1
-	;C2  C#2 D2  D#2 E2  F2  F#2 G2  G#2 A2  A#2 B2
-	;C3  C#3 D3  D#3 E3  F3  F#3 G3  G#3 A3  A#3 B3 
-    ;C4  C#4 D4  D#4 E4  F4  F#4 G4  G#4 A4  A#4 B4
-    ;C5  C#5 D5  D#5 E5  F5      G5  G#5 A5      B5
-    ;C6  C#6                         G#6
-    ;-
 
 ; Returns:
 ; A: starting custom envelope offset
@@ -1495,13 +1498,22 @@ CustomEnvelopeSong:
     .BYTE $68, $68, $79, $79, $79, $68, $68, $57
 
 SwordSfxNotes:
+; vvvv.pppp
+;  p: Period
+;  v: Volume
     .BYTE $47, $67, $87, $A8, $B9, $9A, $8A, $5A
     .BYTE $9B, $8B
 
 ArrowSfxNotes:
+; vvvv.pppp
+;  p: Period
+;  v: Volume
     .BYTE $FB, $F9, $9D, $6E, $3F
 
 FlameSfxNotes:
+; vvvv.pppp
+;  p: Period
+;  v: Volume
     .BYTE $1A, $1A, $1C, $1D, $1D, $1E, $1E, $1F
     .BYTE $1F, $1E, $1A, $19, $16, $13, $11, $11
 
